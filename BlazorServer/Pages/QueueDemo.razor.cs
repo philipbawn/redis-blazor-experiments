@@ -16,15 +16,12 @@ namespace BlazorServer.Pages
         [Inject]
         ISnackbar Snackbar { get; set; }
 
-        private async void AddItem()
+        private async Task AddItem()
         {
-            await Task.Run(() =>
-            {
-                string toAdd = Guid.NewGuid().ToString();
-                QueueManagement.AddItem(toAdd);
-                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-                Snackbar.Add(toAdd + " added.", Severity.Normal);
-            });
+            string toAdd = Guid.NewGuid().ToString();
+            long numberOfItems = await QueueManagement.AddItem(toAdd);
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add(toAdd + " added. There are now " + numberOfItems + " in the list.", Severity.Normal);
         }
 
         private void RefreshQueueMembers()
