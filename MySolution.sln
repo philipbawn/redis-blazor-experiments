@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServer", "BlazorServe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyServices", "MyServices\MyServices.csproj", "{1B63CA7E-C28F-49A2-BE60-5EC2CDEFA4D2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyWebApi", "MyWebApi\MyWebApi.csproj", "{C87996A1-4F53-4957-B5D9-1DA9982C1C48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1B63CA7E-C28F-49A2-BE60-5EC2CDEFA4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B63CA7E-C28F-49A2-BE60-5EC2CDEFA4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B63CA7E-C28F-49A2-BE60-5EC2CDEFA4D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C87996A1-4F53-4957-B5D9-1DA9982C1C48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C87996A1-4F53-4957-B5D9-1DA9982C1C48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C87996A1-4F53-4957-B5D9-1DA9982C1C48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C87996A1-4F53-4957-B5D9-1DA9982C1C48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

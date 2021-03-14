@@ -79,12 +79,13 @@ namespace MyServices
         /// <summary>
         /// Pop an item off the beginning of the queue and inform connected subscribers that inventory of our queue has changed.
         /// </summary>
-        public void RemoveItem()
+        public string RemoveItem()
         {
             var popped = _multiplexer.GetDatabase().ListLeftPop(_listKey);
-            string notification = "Queue contents changed: {item} popped from queue.";
+            string notification = "Queue contents changed: {" + popped + "} popped from queue.";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
+            return popped;
         }
 
         /// <summary>
