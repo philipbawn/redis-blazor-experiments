@@ -68,15 +68,13 @@ namespace MyServices
         /// Notify all connected subscribers that inventory of our queue has changed, after adding an item to the end of it.
         /// </summary>
         /// <param name="notification"></param>
-        public async void AddItem(string itemToAdd)
+        public async Task<long> AddItem(string itemToAdd)
         {
-            await Task.Run(() =>
-            {
-                _multiplexer.GetDatabase().ListRightPush(_listKey, itemToAdd);
-                string notification = "Queue contents changed {item} added to queue.";
-                _subscriber.Publish(_channel, notification);
-                _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
-            });
+            long itemsInList = await _multiplexer.GetDatabase().ListRightPushAsync(_listKey, itemToAdd);               
+            string notification = "Queue contents changed {item} added to queue.";
+            _subscriber.Publish(_channel, notification);
+            _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
+            return itemsInList;
         }
 
         /// <summary>
