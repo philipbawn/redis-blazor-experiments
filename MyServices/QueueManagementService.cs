@@ -57,6 +57,14 @@ namespace MyServices
         }
 
         /// <summary>
+        /// Check if the key exists.
+        /// </summary>
+        public bool QueueExists()
+        {
+            return _multiplexer.GetDatabase().KeyExists(_listKey);
+        }
+
+        /// <summary>
         /// Notify all connected subscribers that inventory of our queue has changed, after adding an item to the end of it.
         /// </summary>
         /// <param name="notification"></param>

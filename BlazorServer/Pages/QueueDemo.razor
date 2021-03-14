@@ -2,7 +2,7 @@
 
 <MudContainer Class="mt-16">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Queue and publish demo</MudText>
-    <MudText Typo="Typo.body1" Align="Align.Center">This uses LSCAN to display the entire list when a message is received on a channel.</MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center">This uses LRANGE to display the entire list when a message is received on a channel.</MudText>
     <MudCard Outlined="true">
         <MudCardContent>
             <MudText Align="Align.Center">Add and remove from this redis list using these buttons.</MudText>
@@ -17,7 +17,7 @@
     </MudCard>
     <MudDivider />
     <MudPaper>
-        @if (this.QueueManagement.GetQueuedItems().Count > 0)
+        @if (this.QueueManagement.QueueExists())
         {
             <MudList Clickable="false">
                 @foreach (var item in this.QueueManagement.GetQueuedItems())

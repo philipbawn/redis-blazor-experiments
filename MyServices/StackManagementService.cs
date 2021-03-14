@@ -57,6 +57,15 @@ namespace MyServices
         }
 
         /// <summary>
+        /// Check if the key exists.
+        /// </summary>
+        public bool StackExists()
+        {
+            return _multiplexer.GetDatabase().KeyExists(_listKey);
+        }
+
+
+        /// <summary>
         /// Notify all connected subscribers that inventory of our stack has changed.
         /// </summary>
         /// <param name="notification"></param>
