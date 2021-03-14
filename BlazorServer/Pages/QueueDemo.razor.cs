@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlazorServer.Pages
 {
-    public partial class QueueDemo
+    public partial class QueueDemo : IDisposable
     {
         [Inject]
         QueueManagementService QueueManagement { get; set; }
