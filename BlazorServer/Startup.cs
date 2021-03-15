@@ -38,7 +38,7 @@ namespace BlazorServer
             services.AddMudServices();
             services.AddTransient<StackManagementService>();
             services.AddTransient<QueueManagementService>();
-
+            services.AddTransient<SortedSetManagementService>();
 
             /// Open telemetry setup.
             var instrumentationOptions = new AspNetCoreInstrumentationOptions();

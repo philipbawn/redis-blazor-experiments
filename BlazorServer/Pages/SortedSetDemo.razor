@@ -1,0 +1,19 @@
+﻿@page "/sorted-set-demo"
+ 
+<MudPaper Width="500px">
+    <MudItem>
+        <MudSlider @bind-Value="value" Color="Color.Tertiary" Class="mt-16">Value: @value</MudSlider>
+    </MudItem>
+    <MudFab @onclick="@(()=> this.AddItem())" Color="Color.Secondary" Icon="@Icons.Material.Filled.Add" Size="Size.Small" IconSize="Size.Large" Class="ma-2" />
+    <MudFab @onclick="@(()=> this.EmptySet())" Color="Color.Secondary" Icon="@Icons.Material.Filled.DeleteForever" Size="Size.Small" IconSize="Size.Large" Class="ma-2" />
+    <MudList Clickable="true">
+        @if (this._setMembers != null && _setMembers.Count > 0)
+        {
+            @foreach (var item in this._setMembers)
+            {
+                <MudListItem Text="@item" />
+                <MudDivider />
+            }
+        }
+    </MudList>
+</MudPaper>
