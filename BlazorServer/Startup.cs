@@ -1,12 +1,17 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Services;
 using MyServices;
+using OpenTelemetry;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -33,6 +38,43 @@ namespace BlazorServer
             services.AddMudServices();
             services.AddTransient<StackManagementService>();
             services.AddTransient<QueueManagementService>();
+
+
+            /// Open telemetry setup.
+            var instrumentationOptions = new AspNetCoreInstrumentationOptions();
+            instrumentationOptions.Filter = (httpContext) =>
+            {
+                return true;
+            };
+            instrumentationOptions.Enrich = (activity, eventName, rawObject) =>
+            {
+                if (eventName.Equals("OnStartActivity"))
+                {
+                    if (rawObject is HttpRequest httpRequest)
+                    {
+                        activity.SetTag("requestProtocol", httpRequest.Protocol);
+                    }
+                }
+                else if (eventName.Equals("OnStopActivity"))
+                {
+                    if (rawObject is HttpResponse httpResponse)
+                    {
+                        activity.SetTag("responseLength", httpResponse.ContentLength);
+                    }
+                }
+            };
+
+
+            services.AddOpenTelemetryTracing(builder => builder
+            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("BlazorServer"))
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation((options) => { options = instrumentationOptions; })
+            .SetSampler(new AlwaysOnSampler())
+            .AddZipkinExporter(c =>
+            {
+                c.Endpoint = new Uri(Configuration["ZIPKIN"]);
+                c.ExportProcessorType = ExportProcessorType.Simple;
+            }));
 
         }
 
