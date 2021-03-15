@@ -72,7 +72,7 @@ namespace MyServices
         public void AddItem(string itemToAdd)
         {
             _multiplexer.GetDatabase().ListLeftPush(_listKey, itemToAdd);
-            string notification = "Stack contents changed {item} added to stack.";
+            string notification = $"Stack contents changed {itemToAdd} added to stack.";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
         }
@@ -83,7 +83,7 @@ namespace MyServices
         public void RemoveItem()
         {
             var popped = _multiplexer.GetDatabase().ListLeftPop(_listKey);
-            string notification = "Stack contents changed: {item} popped from stack.";
+            string notification = $"Stack contents changed: {popped} popped from stack.";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
         }
