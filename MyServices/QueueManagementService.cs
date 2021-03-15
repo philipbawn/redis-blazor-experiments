@@ -39,6 +39,14 @@ namespace MyServices
             _subscriber.Subscribe(_channel, (channel, message) => {
                 _logger.LogInformation("Received on {channel} channel: {notification} ", (string)channel, (string)message);
                 QueueManagerNotification?.Invoke();
+                if (message.ToString().EndsWith("removed"))
+                {
+                    QueueRemovalTriggered?.Invoke((message.ToString().Split(' ').First()));
+                }
+                if (message.ToString().EndsWith("added"))
+                {
+                    QueueAdditionTriggered?.Invoke((message.ToString().Split(' ').First()));
+                }
             });
         }
 
@@ -71,7 +79,7 @@ namespace MyServices
         public async Task<long> AddItem(string itemToAdd)
         {
             long itemsInList = await _multiplexer.GetDatabase().ListRightPushAsync(_listKey, itemToAdd);               
-            string notification = "Queue contents changed {item} added to queue.";
+            string notification = $"{itemToAdd} added";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
             return itemsInList;
@@ -83,7 +91,7 @@ namespace MyServices
         public string RemoveItem()
         {
             var popped = _multiplexer.GetDatabase().ListLeftPop(_listKey);
-            string notification = "Queue contents changed: {" + popped + "} popped from queue.";
+            string notification = $"{popped} removed";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
             return popped;
@@ -94,13 +102,16 @@ namespace MyServices
         /// </summary>
         public event Action QueueManagerNotification;
 
+        public event Action<string> QueueAdditionTriggered;
+        public event Action<string> QueueRemovalTriggered;
+
         /// <summary>
         /// Unsubscribe and clean up.
         /// </summary>
         public void Dispose()
         {
             _subscriber.UnsubscribeAll();
-            _multiplexer.Dispose();
+            _multiplexer.Close();
         }
 
     }

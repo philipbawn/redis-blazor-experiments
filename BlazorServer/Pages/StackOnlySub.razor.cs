@@ -1,20 +1,22 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using MyServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MyServices;
-using MudBlazor;
 
 namespace BlazorServer.Pages
 {
-    public partial class StackDemo : IDisposable
+    public partial class StackOnlySub : IDisposable
     {
         [Inject]
         StackManagementService StackManagement { get; set; }
 
         [Inject]
         ISnackbar Snackbar { get; set; }
+
+        private List<string> _stackMembers;
 
         private async Task AddItem()
         {
@@ -24,8 +26,15 @@ namespace BlazorServer.Pages
             Snackbar.Add(toAdd + " added. There are now " + numberOfItems + " in the list.", Severity.Normal);
         }
 
-        private void RefreshStackMembers()
+        private void RemoveExisting(string existing)
         {
+            _stackMembers.Remove(existing);
+            InvokeAsync(() => StateHasChanged());
+        }
+
+        private void AddNewAdditionFromChannel(string newAddition)
+        {
+            _stackMembers.Insert(0, newAddition);
             InvokeAsync(() => StateHasChanged());
         }
 
@@ -34,7 +43,15 @@ namespace BlazorServer.Pages
         /// </summary>
         protected override void OnInitialized()
         {
-            StackManagement.StackManagerNotification += RefreshStackMembers;
+            _stackMembers = StackManagement.GetStackItems();
+            StackManagement.StackRemovalTriggered += (string removed) =>
+            {
+                RemoveExisting(removed);
+            };
+            StackManagement.StackAdditionTriggered += (string added) =>
+            {
+                AddNewAdditionFromChannel(added);
+            };
         }
 
         /// <summary>
@@ -42,10 +59,16 @@ namespace BlazorServer.Pages
         /// </summary>
         public void Dispose()
         {
-            StackManagement.StackManagerNotification -= RefreshStackMembers;
+            StackManagement.StackRemovalTriggered -= (string removed) =>
+            {
+                RemoveExisting(removed);
+            };
+            StackManagement.StackAdditionTriggered -= (string added) =>
+            {
+                AddNewAdditionFromChannel(added);
+            };
             StackManagement.Dispose();
         }
-
-
     }
+
 }

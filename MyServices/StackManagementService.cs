@@ -39,6 +39,14 @@ namespace MyServices
             _subscriber.Subscribe(_channel, (channel, message) => {
                 _logger.LogInformation("Received on {channel} channel: {notification} ", (string)channel, (string)message);
                 StackManagerNotification?.Invoke();
+                if (message.ToString().EndsWith("removed"))
+                {
+                    StackRemovalTriggered?.Invoke((message.ToString().Split(' ').First()));
+                }
+                if (message.ToString().EndsWith("added"))
+                {
+                    StackAdditionTriggered?.Invoke((message.ToString().Split(' ').First()));
+                }
             });
         }
 
@@ -69,12 +77,13 @@ namespace MyServices
         /// Notify all connected subscribers that inventory of our stack has changed.
         /// </summary>
         /// <param name="notification"></param>
-        public void AddItem(string itemToAdd)
+        public async Task<long> AddItem(string itemToAdd)
         {
-            _multiplexer.GetDatabase().ListLeftPush(_listKey, itemToAdd);
-            string notification = $"Stack contents changed {itemToAdd} added to stack.";
+            long itemsInList = await _multiplexer.GetDatabase().ListLeftPushAsync(_listKey, itemToAdd);
+            string notification = $"{itemToAdd} added";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
+            return itemsInList;
         }
 
         /// <summary>
@@ -83,7 +92,7 @@ namespace MyServices
         public void RemoveItem()
         {
             var popped = _multiplexer.GetDatabase().ListLeftPop(_listKey);
-            string notification = $"Stack contents changed: {popped} popped from stack.";
+            string notification = $"{popped} removed";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
         }
@@ -93,13 +102,16 @@ namespace MyServices
         /// </summary>
         public event Action StackManagerNotification;
 
+        public event Action<string> StackAdditionTriggered;
+        public event Action<string> StackRemovalTriggered;
+
         /// <summary>
         /// Unsubscribe and clean up.
         /// </summary>
         public void Dispose()
         {
             _subscriber.UnsubscribeAll();
-            _multiplexer.Dispose();
+            _multiplexer.Close();
         }
 
     }

@@ -1,26 +1,26 @@
-﻿@page "/stack-demo"
+﻿@page "/queue-sub-demo"
 
 <MudContainer Class="mt-16">
-    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Async stack and publish demo</MudText>
-    <MudText Typo="Typo.body1" Align="Align.Center">This uses LRANGE synchronously to display the entire list when a message is received on a channel.</MudText>
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Async Queue and publish demo</MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center">This uses subscriptions to display changes to the list when a message is received on a channel.</MudText>
     <MudCard Outlined="true">
         <MudCardContent>
             <MudText Align="Align.Center">Add and remove from this redis list asynchronously using these buttons.</MudText>
         </MudCardContent>
         <MudCardActions>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width:50%;"
-                       @onclick="@(()=> this.AddItem())">Add an item to the stack (LPUSH)</MudButton>
+                       @onclick="@(()=> this.AddItem())">Add an item to the queue (RPUSH)</MudButton>
             <br />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width:50%;"
-                       @onclick="@(()=> StackManagement.RemoveItem())">Remove item from the stack (LPOP)</MudButton>
+                       @onclick="@(()=> QueueManagement.RemoveItem())">Remove next item from the queue (LPOP)</MudButton>
         </MudCardActions>
     </MudCard>
     <MudDivider />
     <MudPaper>
-        @if (this.StackManagement.StackExists())
+        @if (_queueMembers != null && _queueMembers.Count > 0)
         {
             <MudList Clickable="false">
-                @foreach (var item in this.StackManagement.GetStackItems())
+                @foreach (var item in this._queueMembers)
                 {
                     <MudListItem Text="@item" Icon="@Icons.Material.Filled.Https" />
                 }
@@ -28,7 +28,7 @@
         }
         else
         {
-            <MudText>Create a stack by adding an item.</MudText>
+            <MudText>Create a queue by adding an item.</MudText>
         }
     </MudPaper>
 </MudContainer>
