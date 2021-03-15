@@ -70,5 +70,6 @@ namespace BlazorServer.Pages
             };
             QueueManagement.Dispose();
         }
+
     }
 }
