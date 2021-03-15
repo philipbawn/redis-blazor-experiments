@@ -72,10 +72,11 @@ namespace MyServices
             return _multiplexer.GetDatabase().KeyExists(_listKey);
         }
 
+
         /// <summary>
-        /// Notify all connected subscribers that inventory of our queue has changed, after adding an item to the end of it.
+        /// Adds an item to the queue
         /// </summary>
-        /// <param name="notification"></param>
+        /// <param name="itemToAdd">a string representing a queued item</param>
         public async Task<long> AddItem(string itemToAdd)
         {
             long itemsInList = await _multiplexer.GetDatabase().ListRightPushAsync(_listKey, itemToAdd);               

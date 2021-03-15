@@ -74,9 +74,9 @@ namespace MyServices
 
 
         /// <summary>
-        /// Notify all connected subscribers that inventory of our stack has changed.
+        /// Adds an item to the stack
         /// </summary>
-        /// <param name="notification"></param>
+        /// <param name="itemToAdd">a string representing a stacked item</param>
         public async Task<long> AddItem(string itemToAdd)
         {
             long itemsInList = await _multiplexer.GetDatabase().ListLeftPushAsync(_listKey, itemToAdd);
