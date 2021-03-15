@@ -1,11 +1,11 @@
 ﻿@page "/queue-demo"
 
 <MudContainer Class="mt-16">
-    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Queue and publish demo</MudText>
-    <MudText Typo="Typo.body1" Align="Align.Center">This uses LRANGE to display the entire list when a message is received on a channel.</MudText>
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Async Queue and publish demo</MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center">This uses LRANGE called synchronously to display the entire list when a message is received on a channel.</MudText>
     <MudCard Outlined="true">
         <MudCardContent>
-            <MudText Align="Align.Center">Add and remove from this redis list using these buttons.</MudText>
+            <MudText Align="Align.Center">Add and remove from this redis list asynchronously using these buttons.</MudText>
         </MudCardContent>
         <MudCardActions>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Style="width:50%;"

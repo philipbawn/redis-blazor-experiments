@@ -20,7 +20,7 @@ namespace BlazorServer.Pages
         {
             string toAdd = Guid.NewGuid().ToString();
             StackManagement.AddItem(toAdd);
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
             Snackbar.Add(toAdd + " added.", Severity.Normal);
         }
 
