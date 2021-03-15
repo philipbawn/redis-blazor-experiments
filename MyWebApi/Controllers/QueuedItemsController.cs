@@ -14,7 +14,6 @@ namespace MyWebApi.Controllers
     public class QueuedItemsController : ControllerBase
     {
 
-
         private readonly ILogger<QueuedItemsController> _logger;
         private readonly QueueManagementService queueManagementService;
 
@@ -39,10 +38,10 @@ namespace MyWebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Post()
+        public async Task<IActionResult> Post()
         {
             string strGuid = Guid.NewGuid().ToString();
-            queueManagementService.AddItem(strGuid);
+            await queueManagementService.AddItem(strGuid);
             var res = new JsonResult(strGuid);
             res.StatusCode = StatusCodes.Status201Created;
             return res;
@@ -54,9 +53,9 @@ namespace MyWebApi.Controllers
         /// <returns>The string from the left side of the list.</returns>
         [HttpGet]
         [Route("next")]
-        public IActionResult GetNext()
+        public async Task<IActionResult> GetNext()
         {
-            var popped = queueManagementService.RemoveItem();
+            var popped = await queueManagementService.RemoveItem();
             var res = new JsonResult(popped);
             res.StatusCode = StatusCodes.Status200OK;
             return res;

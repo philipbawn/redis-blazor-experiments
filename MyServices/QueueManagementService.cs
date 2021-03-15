@@ -88,9 +88,9 @@ namespace MyServices
         /// <summary>
         /// Pop an item off the beginning of the queue and inform connected subscribers that inventory of our queue has changed.
         /// </summary>
-        public string RemoveItem()
+        public async Task<string> RemoveItem()
         {
-            var popped = _multiplexer.GetDatabase().ListLeftPop(_listKey);
+            string popped = await _multiplexer.GetDatabase().ListLeftPopAsync(_listKey);
             string notification = $"{popped} removed";
             _subscriber.Publish(_channel, notification);
             _logger.LogInformation("Published '{notification}' to {channel}", notification, _channel);
